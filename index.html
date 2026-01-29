@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Tiny Universe 💗</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Background layers -->
+  <div class="aurora" aria-hidden="true"></div>
+  <canvas id="heartCanvas" class="heart-canvas" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Floating controls -->
+  <div class="corner-controls">
+    <button class="icon-btn" id="musicBtn" title="Music">♪</button>
+    <button class="icon-btn" id="sparkleBtn" title="Make it extra">✦</button>
+  </div>
+
+  <header class="tiny-brand">
+    <span class="dot"></span>
+    <span>A TINY UNIVERSE</span>
+  </header>
+
+  <main class="app" role="main">
+
+    <!-- 1) Start Gift -->
+    <section class="screen active" id="screen-start" aria-label="Start">
+      <div class="card glass hero">
+        <div class="badge">For You</div>
+        <h1 class="title-script">A Question 💌</h1>
+        <p class="subtitle">Before the gifts… I have one tiny thing to ask you.</p>
+
+        <div class="hero-media">
+          <img src="images/hero.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" />
+          <div class="hero-glow" aria-hidden="true"></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn primary shine" id="btn-start">Reveal the Question</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) Yes/No page -->
+    <section class="screen" id="screen-question" aria-label="Question">
+      <div class="card glass">
+        <h2 class="title-script small">Be My Valentine?</h2>
+        <p class="subtitle">Choose carefully… one answer unlocks four sweet surprises.</p>
+
+        <div class="media-box"><div class="media-ph">💗</div>
+          <img src="images/valentine.gif" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" />
+</div>
+
+        <div class="btn-row" id="questionBtns">
+          <button class="btn primary" id="btn-yes">Yes, Forever! 💍</button>
+          <button class="btn ghost no-btn" id="btn-no">No</button>
+        </div>
+        <p class="hint" id="noHint"></p>
+      </div>
+    </section>
+
+    <!-- 3) Gift Hub -->
+    <section class="screen" id="screen-hub" aria-label="Gifts Hub">
+      <div class="card glass wide">
+        <div class="hub-top">
+          <div>
+            <h2 class="title-script small">Your Treasures</h2>
+            <p class="subtitle">I don’t need perfect — I just need us.</p>
+          </div>
+          <div class="pill" id="unlockedPill">Unlocked: 1</div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span id="openedText">0/4 opened</span>
+            <span class="progress-note">Open in order for the full surprise 💗</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <!-- 4 square tiles -->
+        <div class="gift-tiles" id="giftTiles">
+          <button class="gift-tile" data-gift="0" aria-label="Open Love Letter">
+            <span class="tile-icon">✉️</span>
+            <span class="tile-title">Love Letter</span>
+            <span class="tile-sub">A note from my heart</span>
+            <span class="lock-badge" aria-hidden="true">🔒</span>
+          </button>
+
+          <button class="gift-tile locked" data-gift="1" aria-label="Open Our Album (locked)">
+            <span class="tile-icon">📷</span>
+            <span class="tile-title">Our Album</span>
+            <span class="tile-sub">Little moments, big love</span>
+            <span class="lock-badge" aria-hidden="true">🔒</span>
+          </button>
+
+          <button class="gift-tile locked" data-gift="2" aria-label="Open Gift Tokens (locked)">
+            <span class="tile-icon">🎟️</span>
+            <span class="tile-title">Gift Tokens</span>
+            <span class="tile-sub">Redeem anytime</span>
+            <span class="lock-badge" aria-hidden="true">🔒</span>
+          </button>
+
+          <button class="gift-tile locked" data-gift="3" aria-label="Open Our Future (locked)">
+            <span class="tile-icon">✨</span>
+            <span class="tile-title">Our Future</span>
+            <span class="tile-sub">Tiny promises</span>
+            <span class="lock-badge" aria-hidden="true">🔒</span>
+          </button>
+        </div>
+
+        <!-- Hub actions removed for a cleaner look (Replay + tap hint removed) -->
+      </div>
+    </section>
+
+    <!-- Gift 1: Love Letter (more colourful) -->
+    <section class="screen" id="screen-gift-0" aria-label="Gift 1 Love Letter">
+      <div class="card letter">
+        <div class="letter-top">
+          <span class="badge">For You</span>
+          <span class="gift-count">Gift 1 of 4</span>
+        </div>
+
+        <h2 class="letter-title">Dearest,</h2>
+
+        <p class="letter-lead" id="typewriter"></p>
+
+        <div class="love-chips" aria-label="Love notes">
+          <span class="chip">Your smile = my favorite place</span>
+          <span class="chip">You feel like home</span>
+          <span class="chip">I choose you — every day</span>
+          <span class="chip">Forever looks good on us</span>
+        </div>
+
+        <div class="letter-box">
+          <p>
+            If the world ever feels too loud, come closer — I’ll be your calm.
+            If your heart ever feels heavy, let me hold it with you.
+          </p>
+          <p>
+            I love you in the soft moments, the silly moments, and all the forever moments.
+            Thank you for being <mark>real</mark>, <mark>warm</mark>, and wonderfully <mark>you</mark>.
+          </p>
+        </div>
+
+        <p class="signature" id="signature">Yours, Always. ♡</p>
+
+        <div class="gift-actions">
+          <button class="btn ghost" data-action="backHub">Back</button>
+          <button class="btn primary" data-action="downloadLetter">Save this note</button>
+          <button class="btn primary shine" data-action="nextGift">Next Gift →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gift 2: Album -->
+    <section class="screen" id="screen-gift-1" aria-label="Gift 2 Our Album">
+      <div class="card glass wide">
+        <div class="gift-head">
+          <div>
+            <h2 class="title-serif">Our Album</h2>
+            <p class="subtitle">Tiny snapshots of a love I never want to lose.</p>
+          </div>
+          <span class="gift-count">Gift 2 of 4</span>
+        </div>
+
+        <div class="polaroids">
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo1.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>That day</figcaption></figure>
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo2.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>Your laugh</figcaption></figure>
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo3.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>Us</figcaption></figure>
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo4.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>My favorite</figcaption></figure>
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo5.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>Forever</figcaption></figure>
+          <figure class="polaroid"><div class="photo-frame"><div class="photo-ph">📷</div><img src="images/photo6.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.alt=''; this.parentElement.classList.add('missing');" /></div><figcaption>Always</figcaption></figure>
+        </div>
+
+        <div class="gift-actions">
+          <button class="btn ghost" data-action="backHub">Back</button>
+          <button class="btn primary shine" data-action="nextGift">Next Gift →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gift 3: Tokens -->
+    <section class="screen" id="screen-gift-2" aria-label="Gift 3 Tokens">
+      <div class="card glass wide">
+        <div class="gift-head">
+          <div>
+            <h2 class="title-serif">Gift Tokens</h2>
+            <p class="subtitle">Redeem anytime — no expiry, just love.</p>
+          </div>
+          <span class="gift-count">Gift 3 of 4</span>
+        </div>
+
+        <div class="tokens" id="tokens"></div>
+
+        <div class="gift-actions">
+          <button class="btn ghost" data-action="backHub">Back</button>
+          <button class="btn primary shine" data-action="nextGift">Next Gift →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gift 4: Future -->
+    <section class="screen" id="screen-gift-3" aria-label="Gift 4 Future">
+      <div class="card glass wide">
+        <div class="gift-head">
+          <div>
+            <h2 class="title-serif">Our Future</h2>
+            <p class="subtitle">A tiny promise list for the days ahead.</p>
+          </div>
+          <span class="gift-count">Gift 4 of 4</span>
+        </div>
+
+        <ol class="timeline">
+          <li><span class="t-dot"></span><div><b>More little dates</b><p>Even simple walks, as long as it’s with you.</p></div></li>
+          <li><span class="t-dot"></span><div><b>More photos</b><p>Because I never want to forget us.</p></div></li>
+          <li><span class="t-dot"></span><div><b>More “we”</b><p>More plans, more laughs, more forever.</p></div></li>
+          <li><span class="t-dot"></span><div><b>One big promise</b><p>I’ll keep choosing you — in every season.</p></div></li>
+        </ol>
+
+        <div class="gift-actions">
+          <button class="btn ghost" data-action="backHub">Back</button>
+          <button class="btn primary shine" data-action="finish">Final Surprise ✨</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final -->
+    <section class="screen" id="screen-final" aria-label="Final Surprise">
+      <div class="card glass hero">
+        <div class="badge">Forever</div>
+        <h1 class="title-script">Infinity &amp; Beyond</h1>
+        <p class="subtitle">Every second with you is a gift.</p>
+
+        <div class="video-slot"><div class="media-ph">🎞️</div>
+          <video id="finalVideo" class="final-video" controls playsinline preload="none">
+            <source src="final.mp4" type="video/mp4">
+          </video>
+</div>
+
+        <div class="big-heart watermark" aria-hidden="true">💗</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Background music: starts from the very first screen (muted autoplay, then unmuted on first interaction) -->
+  <audio id="bgMusic" src="song.mp3" preload="auto" loop autoplay muted playsinline></audio>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+:root{
+  --bg1:#0b1020;
+  --bg2:#120c1a;
+  --card: rgba(255,255,255,.14);
+  --card2: rgba(255,255,255,.10);
+  --stroke: rgba(255,255,255,.20);
+  --stroke2: rgba(255,255,255,.10);
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.70);
+  --pink: #ff4d8d;
+  --pink2:#ff9fb3;
+  --lav:#c4b5fd;
+  --cyan:#67e8f9;
+  --shadow: 0 22px 60px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background: radial-gradient(1400px 900px at 20% 10%, #27103b 0%, transparent 55%),
+              radial-gradient(1200px 800px at 85% 25%, #0e3351 0%, transparent 60%),
+              linear-gradient(160deg, var(--bg2) 0%, var(--bg1) 100%);
+  overflow:hidden;
+}
+
+/* Aurora wash */
+.aurora{
+  position:fixed; inset:-20%; z-index:-4;
+  background:
+    radial-gradient(800px 500px at 30% 20%, rgba(255,77,141,.22), transparent 60%),
+    radial-gradient(900px 600px at 80% 30%, rgba(103,232,249,.16), transparent 65%),
+    radial-gradient(900px 600px at 50% 80%, rgba(196,181,253,.18), transparent 60%);
+  filter: blur(12px);
+  animation: drift 14s ease-in-out infinite;
+}
+@keyframes drift{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(-2%,1%,0) scale(1.03)}
+}
+
+.heart-canvas{position:fixed; inset:0; z-index:-3; width:100%; height:100%;}
+
+.grain{
+  position:fixed; inset:0; z-index:-2;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="120" height="120" filter="url(%23n)" opacity="0.22"/></svg>');
+  mix-blend-mode: overlay;
+  pointer-events:none;
+  opacity:.35;
+}
+
+/* UI */
+.tiny-brand{
+  position:fixed; left:26px; top:22px;
+  display:flex; gap:10px; align-items:center;
+  font-size:13px; letter-spacing:.18em;
+  color:rgba(255,255,255,.78);
+  text-transform:uppercase;
+  z-index:10;
+}
+.tiny-brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff, var(--pink));
+  box-shadow: 0 0 0 6px rgba(255,77,141,.10);
+}
+
+.corner-controls{
+  position:fixed; right:18px; top:16px; z-index:12;
+  display:flex; gap:10px;
+}
+.icon-btn{
+  width:44px; height:44px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(20,26,50,.38);
+  color:rgba(255,255,255,.92);
+  cursor:pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.icon-btn:hover{transform: translateY(-2px); border-color: rgba(255,77,141,.35); background: rgba(20,26,50,.55);}
+
+.app{
+  height:100%;
+  display:grid;
+  place-items:center;
+  padding: 20px;
+}
+
+/* Screens */
+.screen{
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  opacity:0; pointer-events:none;
+  transform: translateY(10px) scale(.985);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.screen.active{opacity:1; pointer-events:auto; transform: translateY(0) scale(1);}
+
+/* Cards (a bit smaller) */
+
+/* Gift cards height tuning (keeps gift screens same height as the Question card) */
+.screen[id^="screen-gift-"] .card{
+  max-height: 82vh;
+  overflow: auto;
+}
+
+/* Desktop comfort: widen Gift 1 (Love Letter) + Gift 2 (Album) so everything fits
+   without scrollbars, while keeping the same height.
+   On small screens, scrolling remains enabled for usability. */
+@media (min-width: 860px){
+  /* Make these two cards wider on desktop */
+  #screen-gift-0 .card.letter,
+  #screen-gift-1 .card.glass.wide{
+    width: min(980px, calc(100vw - 120px));
+  }
+
+  /* Remove the card scrollbars for these two screens */
+  #screen-gift-0 .card,
+  #screen-gift-1 .card{
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  /* Prevent any horizontal overflow from inner elements */
+  #screen-gift-0 .card,
+  #screen-gift-1 .card{
+    overflow-x: hidden;
+  }
+
+  /* Gift 2 (Album): keep the same card height, avoid scrollbars,
+     keep the buttons ALWAYS visible, and make photos less "flat". */
+
+  /* Tighten Gift 2 header spacing so BOTH rows (with captions) fit
+     inside the fixed-height card with the pinned footer. */
+  #screen-gift-1 .title-serif{font-size: 34px; margin: 0 0 2px;}
+  #screen-gift-1 .subtitle{margin: 0 0 10px; font-size: 15px;}
+  #screen-gift-1 .gift-head{margin-bottom: 4px;}
+
+  /* Pin the action buttons to the bottom so they never get pushed out of view */
+  #screen-gift-1 .card.glass.wide{
+    position: relative;
+    padding-bottom: 96px; /* reserve space for buttons */
+  }
+  #screen-gift-1 .gift-actions{
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+    margin-top: 0;
+  }
+
+  #screen-gift-1 .polaroids{
+    margin-top: 4px;
+    gap: 10px;
+    /* keep 3 columns but cap each tile width so they don't look too wide */
+    grid-template-columns: repeat(3, minmax(170px, 210px));
+    justify-content: center;
+    /* make sure the grid never overlaps the pinned buttons */
+    padding-bottom: 0;
+  }
+  #screen-gift-1 .polaroid{padding: 6px 6px 4px; border-radius: 14px;}
+  /* Keep photos closer to a square while ensuring the 2nd row + captions are fully visible */
+  #screen-gift-1 .polaroid img{height: clamp(112px, 9.2vw, 136px); border-radius: 12px;}
+  #screen-gift-1 .polaroid figcaption{padding: 4px 4px 0; font-size: 12px;}
+  /* (margin handled by the pinned footer) */
+  /* Gift 3 (Tokens): widen + fit everything without scrollbars on desktop */
+  #screen-gift-2 .card.glass.wide{
+    width: min(1120px, calc(100vw - 120px));
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 96px; /* reserve space for buttons */
+  }
+  #screen-gift-2 .gift-actions{
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+    margin-top: 0;
+  }
+  #screen-gift-2 .title-serif{font-size: 34px; margin: 0 0 2px;}
+  #screen-gift-2 .subtitle{margin: 0 0 10px; font-size: 15px;}
+  #screen-gift-2 .gift-head{margin-bottom: 6px;}
+
+  #screen-gift-2 .tokens{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+  #screen-gift-2 .token{
+    padding: 12px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+  #screen-gift-2 .token b{font-size: 14px;}
+  #screen-gift-2 .token p{
+    font-size: 12.5px;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  #screen-gift-2 .token .redeem{padding: 8px 10px; font-size: 13px;}
+
+}
+
+
+.card{
+  width:min(580px, calc(100vw - 36px));
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+.card.glass{
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  padding: 18px 18px 16px;
+}
+.card.glass.hero{width:min(580px, calc(100vw - 36px));}
+.card.glass.wide{width:min(580px, calc(100vw - 36px));}
+
+.badge{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 7px 10px;
+  border-radius:999px;
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.86);
+  font-weight:600;
+  font-size:13px;
+}
+
+.title-script{font-family:Allura,cursive; font-size: 72px; line-height: .95; margin: 8px 0 8px; color: rgba(255,255,255,.95);}
+.title-script.small{font-size:56px;}
+.title-serif{font-family:"Playfair Display",serif; font-size: 36px; margin:0; letter-spacing:.01em;}
+
+.subtitle{margin: 0 0 16px; color: var(--muted); font-size: 16px; line-height: 1.6;}
+.hint{margin: 14px 0 0; color: rgba(255,255,255,.62); font-size: 13px;}
+
+/* Hero media */
+.hero-media{
+  position:relative;
+  margin: 16px auto 18px;
+  width: min(480px, 100%);
+  aspect-ratio: 16 / 9;
+  border-radius: 22px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(10,12,22,.35);
+}
+.hero-media img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05);}
+.hero-media img.img-missing{object-fit:contain; padding: 22px; opacity:.65;}
+.hero-glow{
+  position:absolute; inset:-30%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,77,141,.28), transparent 55%),
+              radial-gradient(circle at 70% 60%, rgba(103,232,249,.18), transparent 55%);
+  filter: blur(16px);
+  pointer-events:none;
+}
+
+.media-box{
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(10,12,22,.28);
+}
+.media-box img{width:100%; height:240px; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05);}
+
+/* Runaway NO button (moves around the screen, not stuck in the card) */
+.runaway-no{
+  position: fixed !important;
+  z-index: 50;
+}
+.media-box img.img-missing{object-fit:contain; padding: 24px; opacity:.65;}
+.media-caption{font-size: 13px; color: rgba(255,255,255,.62); padding: 10px 12px 12px; text-align:center;}
+
+/* Buttons */
+.btn{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 12px 18px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  user-select:none;
+}
+.btn:active{transform: translateY(1px) scale(.995);}
+.btn.primary{
+  background: linear-gradient(135deg, rgba(255,77,141,.95), rgba(255,159,179,.92));
+  color: #190811;
+  border-color: rgba(255,255,255,.25);
+  box-shadow: 0 18px 45px rgba(255,77,141,.25);
+}
+.btn.primary:hover{transform: translateY(-2px); box-shadow: 0 26px 65px rgba(255,77,141,.32);}
+.btn.ghost{
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+}
+.btn.ghost:hover{transform: translateY(-2px); border-color: rgba(255,77,141,.28); background: rgba(255,255,255,.14);}
+
+.shine{position:relative; overflow:hidden;}
+.shine::after{
+  content:"";
+  position:absolute; inset:-120% -120%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,.38), transparent);
+  transform: rotate(18deg);
+  animation: shine 3.4s infinite;
+}
+@keyframes shine{0%{transform:translateX(-55%) rotate(18deg)} 100%{transform:translateX(55%) rotate(18deg)}}
+
+.btn-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; align-items:center;}
+
+/* Make the Valentine YES/NO row feel perfectly aligned */
+#screen-question #questionBtns{align-items:flex-end;}
+#screen-question #btn-yes{margin-top:6px;}
+
+.no-btn{
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.22);
+  color: rgba(255,255,255,.92);
+}
+.no-btn:hover{background: rgba(255,255,255,.20); border-color: rgba(255,159,179,.35);}
+
+
+/* Runaway "No" button (moves around the screen) */
+.runaway-no{
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 18px 45px rgba(0,0,0,.28);
+}
+
+/* Hub */
+.hub-top{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom: 10px;}
+.pill{
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.88);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.progress{margin-top: 6px;}
+.progress-meta{display:flex; justify-content:space-between; gap:10px; color:rgba(255,255,255,.74); font-size:14px; margin-bottom: 10px; flex-wrap:wrap;}
+.progress-track{height: 10px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.12); overflow:hidden;}
+.progress-fill{height:100%; width:0%; border-radius: 999px; background: linear-gradient(90deg, rgba(255,77,141,.95), rgba(103,232,249,.55)); box-shadow: 0 0 0 8px rgba(255,77,141,.10) inset; transition: width .35s ease;}
+
+/* Gift tiles (4-in-a-row on desktop) */
+.gift-tiles{
+  margin-top: 16px;
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.gift-tile{
+  position:relative;
+  /* Keep Hub compact: avoid huge square tiles when the grid becomes 2 columns
+     (for example, when the browser window is narrow or zoomed). */
+  aspect-ratio: auto;
+  height: 150px;
+  border-radius: 22px;
+  padding: 10px 10px 8px;
+  text-align:left;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(255,255,255,.92);
+  cursor:pointer;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  overflow:hidden;
+}
+.gift-tile:hover{transform: translateY(-4px); border-color: rgba(255,77,141,.28); background: rgba(255,255,255,.14);}
+.gift-tile:focus-visible{outline: 3px solid rgba(255,159,179,.55); outline-offset: 2px;}
+.tile-icon{font-size: 30px; display:block; margin-bottom: 8px;}
+.tile-title{display:block; font-weight: 800; font-size: 14px; margin-bottom: 6px;}
+.tile-sub{display:block; color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.35;}
+
+.lock-badge{
+  position:absolute; right: 12px; top: 12px;
+  width: 38px; height: 38px;
+  display:grid; place-items:center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255,77,141,.30), rgba(196,181,253,.22));
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 18px 40px rgba(255,77,141,.18);
+  opacity:0;
+  transform: translateY(-2px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.gift-tile.locked{
+  filter: saturate(.7);
+  opacity: .92;
+}
+.gift-tile.locked .lock-badge{opacity: 1; transform: translateY(0);} /* highlighted lock */
+.gift-tile.locked::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(300px 220px at 30% 20%, rgba(255,77,141,.18), transparent 60%);
+  opacity:.6;
+}
+.gift-tile.locked{cursor:not-allowed;}
+
+.gift-tile.opened{
+  border-color: rgba(103,232,249,.30);
+  background: rgba(255,255,255,.16);
+}
+.gift-tile.opened::after{
+  content:"✓";
+  position:absolute; left: 12px; top: 12px;
+  width: 34px; height: 34px;
+  display:grid; place-items:center;
+  border-radius: 12px;
+  background: rgba(103,232,249,.18);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.92);
+  font-weight: 900;
+}
+
+.hub-actions{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top: 18px; flex-wrap:wrap;}
+.secret-hint{color: rgba(255,255,255,.58); text-decoration: underline; text-underline-offset: 4px; cursor:pointer;}
+
+/* Letter card (colourful) */
+.card.letter{
+  width:min(580px, calc(100vw - 36px));
+  padding: 18px 20px 14px;
+  border-radius: 24px;
+  background:
+    radial-gradient(900px 480px at 18% 0%, rgba(255,77,141,.22), transparent 55%),
+    radial-gradient(820px 520px at 95% 35%, rgba(103,232,249,.16), transparent 60%),
+    radial-gradient(760px 520px at 55% 100%, rgba(196,181,253,.14), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
+  color: #231018;
+  border: 1px solid rgba(255,255,255,.85);
+  box-shadow: 0 22px 60px rgba(0,0,0,.22);
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.card.letter::before{
+  content:"";
+  position:absolute; inset:-30%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,77,141,.18), transparent 55%),
+    radial-gradient(circle at 80% 25%, rgba(196,181,253,.16), transparent 55%),
+    radial-gradient(circle at 60% 85%, rgba(103,232,249,.10), transparent 60%);
+  filter: blur(18px);
+}
+.card.letter::after{
+  /* colourful glow ring */
+  content:"";
+  position:absolute;
+  inset:-16px;
+  border-radius: 42px;
+  background: conic-gradient(from 180deg,
+    rgba(255,77,141,.85),
+    rgba(103,232,249,.55),
+    rgba(196,181,253,.75),
+    rgba(255,159,179,.85),
+    rgba(255,77,141,.85)
+  );
+  filter: blur(18px);
+  opacity: .45;
+  z-index:0;
+  animation: spinGlow 10s linear infinite;
+  pointer-events:none;
+}
+@keyframes spinGlow{to{transform:rotate(360deg)}}
+.card.letter > *{position:relative; z-index:1;}
+
+.letter-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom: 8px;}
+.gift-count{font-weight: 800; color: rgba(12,7,10,.55); font-size: 13px;}
+
+.letter-title{font-family:"Playfair Display",serif; font-style: italic; font-size: 30px; margin: 4px 0 8px;}
+.letter-lead{font-size: 15px; line-height: 1.75; margin: 0 0 10px; color: rgba(32,14,22,.85);}
+
+.love-chips{display:flex; flex-wrap:wrap; gap:8px; margin: 8px 0 10px;}
+.chip{
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255,77,141,.20), rgba(103,232,249,.16), rgba(196,181,253,.18));
+  border: 1px solid rgba(0,0,0,.06);
+  font-weight: 700;
+  font-size: 13px;
+  color: rgba(24,10,16,.82);
+}
+
+.letter-box{
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.70);
+  border: 1px solid rgba(0,0,0,.06);
+}
+.letter-box p{margin: 0 0 10px; line-height: 1.7; color: rgba(22,10,15,.82);}
+.letter-box p:last-child{margin-bottom:0;}
+mark{background: linear-gradient(135deg, rgba(255,77,141,.28), rgba(255,159,179,.25)); padding: 0 .25em; border-radius: .35em;}
+
+.signature{font-family:Allura,cursive; font-size: 36px; margin: 8px 0 10px; opacity: 0; transform: translateY(4px); transition: opacity .5s ease, transform .5s ease;}
+.signature.show{opacity: 1; transform: translateY(0);} 
+
+.gift-actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top: 8px;}
+
+/* Polaroids */
+.polaroids{
+  display:grid;
+  /* 3 columns x 2 rows (6 photos) for a clearer gallery on desktop */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.polaroid{
+  margin:0;
+  min-width: 0;
+  padding: 10px 10px 8px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: rotate(var(--r, -1.2deg));
+}
+.polaroid:nth-child(2){--r: 1.2deg}
+.polaroid:nth-child(3){--r: -0.6deg}
+.polaroid:nth-child(4){--r: 0.8deg}
+.polaroid:nth-child(5){--r: -1deg}
+.polaroid:nth-child(6){--r: 1deg}
+.polaroid img{width:100%; height:150px; object-fit: cover; border-radius: 14px; display:block; background: rgba(10,12,22,.35);}
+.polaroid img.img-missing{object-fit:contain; padding: 14px; opacity:.75;}
+.polaroid figcaption{padding: 8px 6px 2px; color: rgba(255,255,255,.80); font-weight:700; font-size: 13px; text-align:center;}
+
+/* Tokens */
+.tokens{display:grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px;}
+.token{
+  border-radius: 20px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 14px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.token b{font-size: 15px;}
+.token p{margin:0; color: rgba(255,255,255,.74); line-height: 1.55; font-size: 13px;}
+.token .token-row{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.token .redeem{
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.20);
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  font-weight: 800;
+  cursor:pointer;
+}
+.token.redeemed{opacity:.78;}
+.token.redeemed .redeem{background: rgba(103,232,249,.18); border-color: rgba(103,232,249,.25);}
+
+/* Timeline */
+.timeline{margin: 10px 0 0; padding: 0 0 0 10px; list-style:none;}
+.timeline li{display:grid; grid-template-columns: 20px 1fr; gap: 12px; margin: 14px 0;}
+.t-dot{width: 12px; height: 12px; border-radius: 50%; margin-top: 6px;
+  background: radial-gradient(circle at 30% 30%, #fff, rgba(255,77,141,.9));
+  box-shadow: 0 0 0 6px rgba(255,77,141,.10);
+}
+.timeline b{display:block; margin-bottom: 2px;}
+.timeline p{margin:0; color: rgba(255,255,255,.74); line-height: 1.55;}
+
+/* Final */
+.big-heart{font-size: 88px; filter: drop-shadow(0 18px 40px rgba(255,77,141,.25)); margin: 8px 0 6px; animation: pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.08)}}
+.final-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top: 12px;}
+
+/* Responsive */
+@media (max-width: 920px){
+  .gift-tiles{grid-template-columns: repeat(2, 1fr);} /* 2x2 on smaller */
+  .gift-tile{height: 170px;}
+  .polaroids{grid-template-columns: repeat(2, 1fr);} 
+  .tokens{grid-template-columns: repeat(2, 1fr);} 
+}
+@media (max-width: 520px){
+  .title-script{font-size: 58px;}
+  .title-script.small{font-size: 48px;}
+  .media-box img{height: 260px;}
+  .tokens{grid-template-columns: 1fr;}
+  .gift-tile{height: 155px;}
+  .gift-actions{justify-content:stretch;}
+  .gift-actions .btn{flex:1;}
+}
+
+@media (max-width: 420px){
+  .polaroids{grid-template-columns: 1fr;}
+  .polaroid img{height: 220px;}
+}
+
+/* little shake for locked */
+@keyframes shake{0%{transform:translateX(0)} 20%{transform:translateX(-4px)} 40%{transform:translateX(4px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} 100%{transform:translateX(0)}}
+.shake{animation: shake .35s ease;}
+
+
+/* Final video slot */
+.video-slot{
+  margin-top: 14px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.final-video{
+  width: 100%;
+  height: 260px;
+  border-radius: 16px;
+  background: rgba(10,12,22,.35);
+  display:block;
+}
+.watermark{
+  position:absolute;
+  right: 22px;
+  bottom: 18px;
+  opacity: .28;
+  filter: drop-shadow(0 18px 40px rgba(255,77,141,.25));
+  pointer-events:none;
+}
+
+
+/* Media placeholders (no file-name instructions) */
+.media-box{position:relative;}
+.media-ph{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 52px;
+  opacity:.55;
+  pointer-events:none;
+}
+.media-box:not(.missing) .media-ph{display:none;}
+.video-slot{position:relative;}
+.video-slot .media-ph{font-size:44px;}
+.video-slot video{position:relative; z-index:1;}
+
+
+
+/* Gift 2 (Album) — make photo area slightly taller & closer to square, without changing card height */
+#screen-gift-1 .photo-frame{border-radius:12px; overflow:hidden;}
+#screen-gift-1 .photo-ph{border-radius:12px;}
+/* Photo frame placeholder */
+.photo-frame{position:relative;}
+.photo-ph{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:42px;
+  opacity:.5;
+  pointer-events:none;
+}
+/* Hide the placeholder when a real image exists */
+.photo-frame:not(.missing) .photo-ph{display:none;}
+/* If the image file is missing, keep the placeholder visible */
+.photo-frame.missing img{display:none;}
+.photo-frame.missing{background: rgba(10,12,22,.25); border-radius:14px;}
